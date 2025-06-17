@@ -76,11 +76,10 @@
                     score: 0,
                     userAnswers: [],
                     isLoading: false,
-                    modalContent: '',
-                    showModal: false,
                     connectTopic1: 'magna-carta',
                     connectTopic2: 'french-revolution',
                     connectionContent: '',
+                    isReading: false, // For TTS feature
                     topics: {
                         'magna-carta': {
                             title: 'Magna Carta',
@@ -112,6 +111,11 @@
                                         <li>Its influence extended globally, impacting the 1948 Universal Declaration of Human Rights.</li>
                                         <li>In the United States, the Magna Carta served as a model for the American colonists' demands for freedom from England in 1776, inspiring the fight for independence. Its legacy is evident in the U.S. Constitution and specifically the Fifth Amendment, which protects against deprivation of life, liberty, or property without a fair trial.</li>
                                     </ul>
+                                    <div class="mt-12 text-center">
+                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg quiz-option-btn" data-quiz-start="magna-carta">
+                                            Take the Magna Carta Quiz &rarr;
+                                        </button>
+                                    </div>
                                 </div>
                             `
                         },
@@ -149,6 +153,11 @@
                                         <li>Ultimately, in 1799, a powerful military general named Napoleon Bonaparte overthrew The Directory, bringing an end to its rule and establishing his own reign over France.</li>
                                     </ul>
                                     <p>The Directory's rule followed the period often associated with the Reign of Terror, during which the Jacobin group ran the country. The Directory's establishment aimed to stabilize France after the turbulent period that included leaders like Maximilien Robespierre.</p>
+                                    <div class="mt-12 text-center">
+                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg quiz-option-btn" data-quiz-start="french-revolution">
+                                            Take the French Revolution Quiz &rarr;
+                                        </button>
+                                    </div>
                                 </div>
                             `
                         },
@@ -196,6 +205,11 @@
                                     <p>Despite these oppressions, the colonists repeatedly petitioned for redress, but their petitions were answered only by repeated injury. Therefore, the King's character was deemed that of a tyrant, unfit to rule a free people. The colonists also warned their British brethren about unwarrantable jurisdiction but were met with indifference.</p>
                                     <p>Consequently, the Representatives of the united States of America declared that these united Colonies are, and of Right ought to be Free and Independent States. They are Absolved from all Allegiance to the British Crown, and all political connection between them and Great Britain is totally dissolved. As Free and Independent States, they have full Power to levy War, conclude Peace, contract Alliances, establish Commerce, and perform all other acts and things that independent States may rightfully do. For the support of this Declaration, they mutually pledged their Lives, Fortunes, and sacred Honor.</p>
                                     <p>Among the signers of the Declaration of Independence was Thomas Jefferson from Virginia. While the source lists him as a signer, it does not explicitly state that he was the primary author, nor does it refer to him as the third US President.</p>
+                                    <div class="mt-12 text-center">
+                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg quiz-option-btn" data-quiz-start="declaration-of-independence">
+                                            Take the Declaration of Independence Quiz &rarr;
+                                        </button>
+                                    </div>
                                 </div>
                             `
                         },
@@ -272,6 +286,11 @@
                                         <li>However, the U.S. Senate refused to ratify the Treaty of Versailles, partly due to opposition to the League of Nations.</li>
                                         <li>The peace did not last. The German people resented the harsh punishments, leading to the rise of Adolf Hitler in 1933. Hitler rebuilt the German military, and the League of Nations failed to stop him, ultimately contributing to World War II.</li>
                                     </ul>
+                                    <div class="mt-12 text-center">
+                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg quiz-option-btn" data-quiz-start="wwi">
+                                            Take the World War I Quiz &rarr;
+                                        </button>
+                                    </div>
                                </div>
                             `
                         },
@@ -362,6 +381,11 @@
                                     <p><strong>Peace Treaties (1947):</strong> Treaties were drafted with Italy, Hungary, Bulgaria, Romania, and Finland, addressing territorial changes, reparations, and disarmament. Guarantees were given against racial discrimination and the rebirth of fascist governments.</p>
                                     <p><strong>Austria and Trieste:</strong> Austria was also divided into four occupation zones and later reunited in 1955. Trieste became a trouble spot, eventually divided between Italy and Yugoslavia.</p>
                                     <p><strong>Decline of British Power:</strong> Britain began to give up its empire, granting independence to India (1947) and turning over the Palestine problem to the UN.</p>
+                                     <div class="mt-12 text-center">
+                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg quiz-option-btn" data-quiz-start="wwii">
+                                            Take the World War II Quiz &rarr;
+                                        </button>
+                                    </div>
                                </div>
                             `
                         },
@@ -394,6 +418,11 @@
                                         <li><strong>June 6, 1944:</strong> D-Day took place, with British, Canadian, French, and US troops landing on the beaches of German-occupied France.</li>
                                     </ul>
                                     <p>The website also features survivor testimonies, with several individuals like Alice Redlich, Peter Briess, Freddie Knoller, Eva Clarke, and Simon Winston highlighted as examples.</p>
+                                     <div class="mt-12 text-center">
+                                        <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg quiz-option-btn" data-quiz-start="holocaust">
+                                            Take the Holocaust Quiz &rarr;
+                                        </button>
+                                    </div>
                                 </div>
                             `
                         }
@@ -475,47 +504,7 @@
                 };
             },
             methods: {
-                // ... (existing methods: navigate, startQuiz, submitAnswer, getResultsFeedback, shuffleArray, etc.)
-
-                 // --- New methods for Gemini API ---
-                async simplifyText() {
-                    if (this.isLoading) return;
-                    this.isLoading = true;
-                    this.showModal = true;
-                    this.modalContent = '✨ Our AI is simplifying the text for you...';
-                    this.renderPage();
-
-                    try {
-                        const topicText = document.getElementById(`topic-text-${this.currentTopic}`).innerText;
-                        const prompt = `Please explain the following historical text in simple, easy-to-understand terms, as if you were explaining it to a 15-year-old. Keep it concise but cover the main points:\n\n---\n${topicText}`;
-                        
-                        const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                        const payload = { contents: chatHistory };
-                        const apiKey = ""; // API key will be automatically provided
-                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                        const response = await fetch(apiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-
-                        const result = await response.json();
-
-                        if (result.candidates && result.candidates[0].content.parts[0].text) {
-                            this.modalContent = result.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
-                        } else {
-                            this.modalContent = 'Sorry, we couldn\'t simplify the text at this time. Please try again.';
-                        }
-                    } catch (error) {
-                        console.error("Error simplifying text:", error);
-                        this.modalContent = 'An error occurred. Please check the console for details.';
-                    } finally {
-                        this.isLoading = false;
-                        this.renderPage();
-                    }
-                },
-
+                
                 async generateNewQuestions() {
                     if (this.isLoading) return;
                     this.isLoading = true;
@@ -581,8 +570,8 @@
                     this.renderPage();
 
                     try {
-                        const topic1Text = document.getElementById(`topic-text-${this.connectTopic1}`).innerText;
-                        const topic2Text = document.getElementById(`topic-text-${this.connectTopic2}`).innerText;
+                        const topic1Text = this.topics[this.connectTopic1].content;
+                        const topic2Text = this.topics[this.connectTopic2].content;
                         
                         const prompt = `Based on the following two historical texts, please explain the historical connection, influence, or contrast between "${this.topics[this.connectTopic1].title}" and "${this.topics[this.connectTopic2].title}".
 
@@ -624,19 +613,62 @@
                     }
                 },
                 
-                closeModal() {
-                    this.showModal = false;
-                    this.modalContent = '';
-                    this.renderPage();
-                },
+                toggleReading() {
+                    if (!('speechSynthesis' in window)) {
+                        alert('Sorry, your browser does not support text-to-speech.');
+                        return;
+                    }
+                    // If it's already speaking, cancel it
+                    if (this.isReading) {
+                        window.speechSynthesis.cancel();
+                        this.isReading = false;
+                        this.renderPage();
+                        return;
+                    }
+                    // Get the text from the current topic
+                    const topicTextElement = document.getElementById(`topic-text-${this.currentTopic}`);
+                    if (!topicTextElement) return;
 
+                    const textToRead = topicTextElement.innerText;
+                    const utterance = new SpeechSynthesisUtterance(textToRead);
+
+                    utterance.onstart = () => {
+                        this.isReading = true;
+                        this.renderPage(); // Update button text to "Stop Reading"
+                    };
+
+                    utterance.onend = () => {
+                        this.isReading = false;
+                        this.renderPage(); // Update button text back to "Read..."
+                    };
+                    
+                    utterance.onerror = (event) => {
+                        console.error('SpeechSynthesisUtterance.onerror', event);
+                        this.isReading = false;
+                        this.renderPage();
+                    };
+
+                    window.speechSynthesis.speak(utterance);
+                },
+                
                 // --- Page Rendering ---
                 navigate(page, topic = null) {
+                    // Stop any speech when navigating away
+                    if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                    }
+                    this.isReading = false;
+
                     this.currentPage = page;
                     this.currentTopic = topic;
                     window.scrollTo(0, 0);
                 },
                 startQuiz(type) {
+                     if ('speechSynthesis' in window) {
+                        window.speechSynthesis.cancel();
+                    }
+                    this.isReading = false;
+                    
                     this.quizType = type;
                     this.currentQuestionIndex = 0;
                     this.score = 0;
@@ -716,14 +748,13 @@
                 },
                 renderPage() {
                     const appEl = document.getElementById('app');
-                    let modalHtml = this.showModal ? this.ModalComponent() : '';
-
+                    
                     switch (this.currentPage) {
                         case 'home':
                             appEl.innerHTML = this.HomePage();
                             break;
                         case 'topic':
-                            appEl.innerHTML = this.TopicPage() + modalHtml;
+                            appEl.innerHTML = this.TopicPage();
                             break;
                         case 'quiz':
                             appEl.innerHTML = this.QuizPage();
@@ -769,23 +800,20 @@
                         });
                     });
                     // Gemini features
-                    const simplifyBtn = document.getElementById('simplify-btn');
-                    if(simplifyBtn) simplifyBtn.addEventListener('click', () => this.simplifyText());
-
                     const newQuestionsBtn = document.getElementById('new-questions-btn');
                     if(newQuestionsBtn) newQuestionsBtn.addEventListener('click', () => this.generateNewQuestions());
                     
                     const connectBtn = document.getElementById('connect-btn');
                     if(connectBtn) connectBtn.addEventListener('click', () => this.connectTopics());
 
-                    const closeModalBtn = document.getElementById('close-modal-btn');
-                    if(closeModalBtn) closeModalBtn.addEventListener('click', () => this.closeModal());
-                    
                     const connectTopic1Select = document.getElementById('connect-topic-1');
                     if(connectTopic1Select) connectTopic1Select.addEventListener('change', (e) => this.connectTopic1 = e.target.value);
 
                     const connectTopic2Select = document.getElementById('connect-topic-2');
                     if(connectTopic2Select) connectTopic2Select.addEventListener('change', (e) => this.connectTopic2 = e.target.value);
+                    
+                    const ttsBtn = document.getElementById('tts-btn');
+                    if (ttsBtn) ttsBtn.addEventListener('click', () => this.toggleReading());
                 },
                 HomePage() {
                     let topicCards = '';
@@ -823,24 +851,30 @@
                 },
                 TopicPage() {
                     const topic = this.topics[this.currentTopic];
+                    const ttsButtonText = this.isReading ? `
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 9v6m4-6v6m7-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Stop Reading` : `
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.636 5.636a9 9 0 0112.728 0m-12.728 0l12.728 12.728"></path></svg>
+                        Read Text with AI`;
+
                     return `
-                        <div class="min-h-screen bg-white">
+                        <div class="min-h-screen bg-white pb-24">
                             <header class="bg-gray-800 text-white shadow-md">
                                 <div class="container mx-auto px-6 py-4 flex justify-between items-center flex-wrap gap-4">
                                     <h1 class="text-2xl sm:text-3xl font-bold">${topic.title}</h1>
-                                    <div>
-                                        <button id="simplify-btn" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded mr-2">
-                                            ✨ Simplify with AI
-                                        </button>
-                                        <button class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded" data-navigate="home">
-                                            &larr; Back to Menu
-                                        </button>
-                                    </div>
+                                    <button class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded" data-navigate="home">
+                                        &larr; Back to Menu
+                                    </button>
                                 </div>
                             </header>
                              <main class="container mx-auto px-6 py-12">
                                 ${topic.content}
                             </main>
+                            <div id="tts-container" class="fixed bottom-5 right-5 z-20">
+                                <button id="tts-btn" class="flex items-center justify-center ${this.isReading ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-500 hover:bg-blue-600'} text-white font-bold py-3 px-4 rounded-full shadow-lg transition-transform transform hover:scale-105">
+                                    ${ttsButtonText}
+                                </button>
+                            </div>
                         </div>
                     `;
                 },
@@ -860,10 +894,11 @@
                                  <h1 class="text-4xl font-bold text-gray-800 mb-2">Quiz Zone</h1>
                                  <p class="text-gray-600 mb-8">Choose your challenge.</p>
                                 <div class="space-y-4">
-                                    ${quizOptions}
-                                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg quiz-option-btn w-full" data-quiz-start="all">
+                                     <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg quiz-option-btn w-full" data-quiz-start="all">
                                         Comprehensive Exam (20 Questions)
                                     </button>
+                                    <hr class="my-4 border-gray-300"/>
+                                    ${quizOptions}
                                 </div>
                                 <button class="mt-8 text-indigo-600 hover:text-indigo-800 font-semibold" data-navigate="home">
                                     &larr; Back to Main Menu
@@ -985,23 +1020,7 @@
                             </main>
                         </div>
                     `;
-                },
-                ModalComponent() {
-                    return `
-                        <div id="modal-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 modal items-center justify-center">
-                            <div class="bg-white rounded-lg shadow-2xl w-11/12 max-w-2xl max-h-[80vh] overflow-y-auto p-6 z-50">
-                                <div class="flex justify-between items-center mb-4">
-                                    <h3 class="text-2xl font-bold text-gray-800">✨ AI Explanation</h3>
-                                    <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800">&times;</button>
-                                </div>
-                                <div class="prose max-w-none">
-                                    <p>${this.modalContent}</p>
-                                </div>
-                            </div>
-                        </div>
-                    `;
                 }
-
             },
             mounted() {
                 this.renderPage();
