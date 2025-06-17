@@ -53,6 +53,9 @@
          .prose-custom li {
             margin-bottom: 0.5rem;
         }
+        .modal {
+            display: flex;
+        }
     </style>
 </head>
 <body class="text-gray-800">
@@ -62,8 +65,6 @@
     </div>
 
     <script>
-        // This object defines the structure and logic of our application,
-        // similar to a component definition in a framework like Vue.
         const appConfig = {
             data() {
                 return {
@@ -74,39 +75,39 @@
                     currentQuestionIndex: 0,
                     score: 0,
                     userAnswers: [],
+                    isLoading: false,
+                    modalContent: '',
+                    showModal: false,
+                    connectTopic1: 'magna-carta',
+                    connectTopic2: 'french-revolution',
+                    connectionContent: '',
                     topics: {
                         'magna-carta': {
                             title: 'Magna Carta',
                             content: `
-                                <div class="prose prose-custom">
-                                    <h2>The Magna Carta (1215)</h2>
-                                    <p>The Magna Carta, or "Great Charter," is one of the most important documents in history. Signed by King John of England on June 15, 1215, under pressure from a group of rebellious barons, it was the first document to put into writing the principle that the king and his government were not above the law.</p>
-
-                                    <h3>Key Context</h3>
+                                <div class="prose prose-custom" id="topic-text-magna-carta">
+                                    <h2>Magna Carta</h2>
+                                    <p>The Magna Carta, also known as the Great Charter, was a pivotal document in the history of democracy, lasting from 1215 and serving as the first written constitution in European history. It was written in Latin.</p>
+                                    <h3>Key Events and Context:</h3>
+                                    <p>King John of England faced a potential rebellion from powerful barons due to his unpopularity and actions. He had angered many with cruel treatment of prisoners, lost territories to France, and was even excommunicated by Pope Innocent III. He was compelled to agree to this charter under the threat of civil war.</p>
+                                    <p>The barons, led by Robert FitzWalter, gained control of London, forcing King John to yield.</p>
+                                    <p>On June 15, 1215, King John agreed to the barons' terms in a document called the Articles of the Barons. After four days of modifications, the formal document, later named the Magna Carta, was signed near the River Thames in Surrey.</p>
+                                    <h3>Core Principles and Clauses:</h3>
+                                    <p>The Magna Carta effectively placed the king within the rule of law, meaning he, like his people, had to obey the law. This was a significant step towards limiting the monarchy's power and shifting power to the people.</p>
+                                    <p>It contained 63 clauses covering law, liberty, and the church.</p>
+                                    <p>The most famous and important clause guarantees the right to justice and a fair trial for all "free men". This includes the statement: "No free man shall be seized or imprisoned, or stripped of his rights or possessions... except by the lawful judgment of his equals or by the law of the land. To no one will we sell, to no one deny or delay right or justice".</p>
+                                    <p>It prohibited the levying of taxes without the "general consent of the realm," which referred to major barons and churchmen.</p>
+                                    <p>It also established that laws needed to be written down and followed.</p>
+                                    <h3>Legacy and Influence:</h3>
                                     <ul>
-                                        <li>King John was an unpopular king. He had lost English territories in France, burdened his subjects with heavy taxes to pay for his wars, and had a reputation for cruelty.</li>
-                                        <li>The barons, the most powerful landowners in the kingdom, had had enough. They captured London, forcing King John to negotiate.</li>
-                                        <li>The agreement took place at Runnymede, a meadow by the River Thames.</li>
+                                        <li>Although initially failing and leading to civil war, the Magna Carta was reissued after John's death by his advisors for his son, Henry III, with the 1225 version becoming definitive.</li>
+                                        <li>Over time, it gained symbolic status, particularly for guaranteeing trial by jury in the 14th century and individual liberty in the 17th century.</li>
+                                        <li>Its influence extended globally, impacting the 1948 Universal Declaration of Human Rights.</li>
+                                        <li>In the United States, the Magna Carta served as a model for the American colonists' demands for freedom from England in 1776, inspiring the fight for independence. Its legacy is evident in the U.S. Constitution and specifically the Fifth Amendment, which protects against deprivation of life, liberty, or property without a fair trial.</li>
                                     </ul>
-
-                                    <h3>Core Principles</h3>
-                                    <p>The Magna Carta contained 63 clauses. While many dealt with specific grievances of the time, several clauses established foundational principles of law and liberty:</p>
-                                    <ul>
-                                        <li><strong>Rule of Law:</strong> It established that everyone, including the king, was subject to the law.</li>
-                                        <li><strong>Right to a Fair Trial:</strong> The most famous clause, 39, states: "No free man shall be seized or imprisoned, or stripped of his rights or possessions... except by the lawful judgment of his equals or by the law of the land." This is the origin of the right to a jury trial.</li>
-                                        <li><strong>Limits on Taxation:</strong> It stated that no new taxes could be levied without the "general consent of the realm," meaning the agreement of the leading barons and churchmen.</li>
-                                    </ul>
-
-                                    <h3>Legacy and Influence</h3>
-                                    <ul>
-                                        <li>Although it initially failed and the Pope nullified it, leading to a civil war, the Magna Carta was reissued after King John's death.</li>
-                                        <li>Its principles were fundamental to the development of constitutional law in the English-speaking world.</li>
-                                        <li>It directly influenced the American Revolution. The colonists believed they were fighting for the rights enshrined in the Magna Carta. Its legacy is clear in the U.S. Constitution and the Bill of Rights, particularly the Fifth Amendment.</li>
-                                    </ul>
-
                                     <h3 class="mt-6">Audio Summary</h3>
                                     <audio controls class="w-full">
-                                        <source src="https://drive.google.com/uc?export=download&id=1HY-5-yaoVByLweUMnwgIlzlHbumBVt5q" type="audio/mpeg">
+                                        <source src="https://docs.google.com/uc?id=1HY-5-yaoVByLweUMnwgIlzlHbumBVt5q" type="audio/mpeg">
                                         Your browser does not support the audio element.
                                     </audio>
                                 </div>
@@ -115,35 +116,33 @@
                         'french-revolution': {
                             title: 'French Revolution',
                             content: `
-                                <div class="prose prose-custom">
-                                    <h2>The French Revolution and The Directory (1795-1799)</h2>
-                                    <p>The French Revolution was a period of radical social and political upheaval in France from 1789 to 1799. This summary focuses on a specific phase: The Directory.</p>
-                                    
-                                    <h3>Background: The Reign of Terror</h3>
-                                    <p>Before the Directory, France was ruled by the Jacobins, led by Maximilien Robespierre. This period (1793-1794) is known as the Reign of Terror, where thousands were executed as "enemies of the revolution." Robespierre's fall from power paved the way for a new, more moderate government.</p>
-
-                                    <h3>Formation of The Directory</h3>
+                                <div class="prose prose-custom" id="topic-text-french-revolution">
+                                    <h2>The French Revolution</h2>
+                                    <p>The Directory was a significant period in The French Revolution, specifically ruling France from 1795 to 1799. This government was established after the fall of the Jacobin government and marked a shift in power to the wealthier middle class.</p>
+                                    <h3>Here are the key aspects of The Directory, crucial for understanding its role:</h3>
+                                    <h4>Formation and Structure:</h4>
                                     <ul>
-                                        <li>Following the Reign of Terror, a new constitution was introduced in 1795.</li>
-                                        <li>This constitution restricted voting rights to property owners, shifting power to the wealthier middle class (the bourgeoisie).</li>
-                                        <li>The government had a bicameral legislature (two legislative councils) and an executive branch consisting of a five-man Directory.</li>
+                                        <li>It was formed following the introduction of a new constitution.</li>
+                                        <li>Voting rights were denied to non-propertied sections of society, meaning only the wealthier middle class held political power.</li>
+                                        <li>The government itself comprised two legislative councils.</li>
+                                        <li>The day-to-day administration of the country was managed by a directory of five men.</li>
                                     </ul>
-
-                                    <h3>Challenges and Instability</h3>
-                                    <p>The Directory's rule was plagued by problems:</p>
+                                    <h4>Challenges and Problems Faced:</h4>
                                     <ul>
-                                        <li><strong>Economic Crisis:</strong> France faced famine, and the government was effectively bankrupt.</li>
-                                        <li><strong>War:</strong> The revolutionary wars against other European powers continued.</li>
-                                        <li><strong>Political Instability:</strong> The Directory faced threats from both remaining Jacobins on the left and royalists on the right. There were constant internal power struggles and corruption.</li>
+                                        <li>During its rule, The Directory encountered numerous difficulties, including famine, civil war, and ongoing wars with other countries.</li>
+                                        <li>There was also a significant internal struggle for power within the directory itself and with the legislative councils.</li>
                                     </ul>
-
-                                    <h3>The Rise of Napoleon Bonaparte</h3>
-                                    <p>As the Directory became increasingly unpopular and ineffective, the army's power and prestige grew. One general, Napoleon Bonaparte, became a national hero due to his brilliant military victories.</p>
-                                    <p>In 1799, Napoleon saw his opportunity. He led a coup d'état that overthrew the Directory, effectively ending the French Revolution and beginning his own rule as First Consul of France. He would later crown himself Emperor.</p>
-                                    
+                                    <h4>Decline and Overthrow:</h4>
+                                    <ul>
+                                        <li>Over time, The Directory became increasingly corrupt.</li>
+                                        <li>Concurrently, military leaders in France began to gain more power.</li>
+                                        <li>The general populace grew unhappy with this government.</li>
+                                        <li>Ultimately, in 1799, a powerful military general named Napoleon Bonaparte overthrew The Directory, bringing an end to its rule and establishing his own reign over France.</li>
+                                    </ul>
+                                    <p>The Directory's rule followed the period often associated with the Reign of Terror, during which the Jacobin group ran the country. The Directory's establishment aimed to stabilize France after the turbulent period that included leaders like Maximilien Robespierre.</p>
                                     <h3 class="mt-6">Audio Summary</h3>
                                     <audio controls class="w-full">
-                                        <source src="https://drive.google.com/uc?export=download&id=1AkUMIefICK0b8PM7KtOrPCcWbuB326Nh" type="audio/mpeg">
+                                        <source src="https://docs.google.com/uc?id=1AkUMIefICK0b8PM7KtOrPCcWbuB326Nh" type="audio/mpeg">
                                         Your browser does not support the audio element.
                                     </audio>
                                 </div>
@@ -152,34 +151,43 @@
                         'declaration-of-independence': {
                             title: 'Declaration of Independence',
                             content: `
-                                <div class="prose prose-custom">
-                                    <h2>The Declaration of Independence (1776)</h2>
-                                    <p>Adopted by the Second Continental Congress on July 4, 1776, the Declaration of Independence is the founding document of the United States. It formally announced the thirteen American colonies' separation from Great Britain.</p>
-
-                                    <h3>Core Philosophy</h3>
-                                    <p>The Declaration, primarily authored by Thomas Jefferson, is famous for its preamble, which lays out a philosophy of government based on the ideas of the Enlightenment:</p>
+                                <div class="prose prose-custom" id="topic-text-declaration-of-independence">
+                                    <h2>Declaration of Independence</h2>
+                                    <p>The "Declaration of Independence," adopted by the united States of America in Congress on July 4, 1776, served to declare the causes that compelled the thirteen colonies to separate from Great Britain. This date marks when America became independent.</p>
+                                    <p>The core principles outlined in the Declaration state that all men are created equal and are endowed by their Creator with certain unalienable Rights, including Life, Liberty, and the pursuit of Happiness. To secure these rights, Governments are instituted among Men, deriving their just powers from the consent of the governed. The Declaration asserts that whenever any Form of Government becomes destructive of these ends, it is the Right of the People to alter or to abolish it and institute new Government that seems most likely to effect their Safety and Happiness. While prudence dictates against changing long-established governments for light reasons, a "long train of abuses and usurpations" evincing a design to reduce the people under "absolute Despotism" makes it their right and duty to throw off such government.</p>
+                                    <p>The document details a history of repeated injuries and usurpations by the King of Great Britain, all aimed at establishing "absolute Tyranny" over the States. These grievances include:</p>
                                     <ul>
-                                        <li><strong>Natural Rights:</strong> "We hold these truths to be self-evident, that all men are created equal, that they are endowed by their Creator with certain unalienable Rights, that among these are Life, Liberty and the pursuit of Happiness."</li>
-                                        <li><strong>Consent of the Governed:</strong> Governments are created to protect these rights and "deriv[e] their just powers from the consent of the governed."</li>
-                                        <li><strong>Right of Revolution:</strong> When a government becomes tyrannical and destructive of these rights, "it is the Right of the People to alter or to abolish it, and to institute new Government."</li>
+                                        <li>Refusing to assent to laws necessary for the public good.</li>
+                                        <li>Forbidding governors from passing laws of immediate importance unless suspended for his assent, and then neglecting them.</li>
+                                        <li>Refusing to pass laws for large districts unless people relinquished their right to representation.</li>
+                                        <li>Calling legislative bodies to unusual, uncomfortable, and distant places to fatigue them into compliance.</li>
+                                        <li>Dissolving Representative Houses for opposing his invasions on the rights of the people.</li>
+                                        <li>Refusing to cause others to be elected after dissolving legislative bodies, leaving the States exposed.</li>
+                                        <li>Obstructing the population of the States by hindering naturalization and migration, and raising conditions for land appropriations.</li>
+                                        <li>Obstructing the Administration of Justice by refusing to assent to laws for establishing Judiciary Powers, and making judges dependent on his will for their tenure and salaries.</li>
+                                        <li>Erecting new offices and sending officers to harass the people.</li>
+                                        <li>Keeping Standing Armies among the colonies in times of peace without the consent of legislatures.</li>
+                                        <li>Rendering the Military independent of and superior to the Civil Power.</li>
+                                        <li>Combining with others to subject the colonists to foreign jurisdiction and pretended legislation, including quartering troops and protecting them from punishment for murder.</li>
+                                        <li>Cutting off trade with all parts of the world.</li>
+                                        <li>Imposing Taxes without consent.</li>
+                                        <li>Depriving colonists of Trial by Jury.</li>
+                                        <li>Transporting colonists beyond Seas for pretended offenses.</li>
+                                        <li>Abolishing the free System of English Laws in a neighbouring Province, establishing arbitrary government, and enlarging its boundaries to introduce the same rule into the Colonies.</li>
+                                        <li>Taking away charters, abolishing valuable laws, and fundamentally altering forms of government.</li>
+                                        <li>Suspending legislatures and declaring power to legislate for the colonies in all cases.</li>
+                                        <li>Abdicating government by declaring the colonies out of his protection and waging war.</li>
+                                        <li>Plundering seas, ravaging coasts, burning towns, and destroying lives.</li>
+                                        <li>Transporting foreign mercenaries to complete acts of death, desolation, and tyranny.</li>
+                                        <li>Constraining captive citizens to bear arms against their country.</li>
+                                        <li>Exciting domestic insurrections and bringing "merciless Indian Savages" to the frontiers.</li>
                                     </ul>
-
-                                    <h3>List of Grievances</h3>
-                                    <p>The bulk of the document is a list of specific grievances against King George III and the British government. These were meant to justify the colonies' decision to rebel. Key complaints included:</p>
-                                    <ul>
-                                        <li>Taxation without representation.</li>
-                                        <li>Obstructing justice and establishing dependent judges.</li>
-                                        <li>Keeping standing armies in the colonies during peacetime.</li>
-                                        <li>Cutting off colonial trade with the rest of the world.</li>
-                                        <li>Waging war against the colonies.</li>
-                                    </ul>
-                                    
-                                    <h3>The Declaration's Conclusion</h3>
-                                    <p>The final section officially declares the colonies to be "Free and Independent States," absolved from all allegiance to the British Crown. The signers mutually pledged their "Lives, their Fortunes and their sacred Honor" to support this cause.</p>
-
+                                    <p>Despite these oppressions, the colonists repeatedly petitioned for redress, but their petitions were answered only by repeated injury. Therefore, the King's character was deemed that of a tyrant, unfit to rule a free people. The colonists also warned their British brethren about unwarrantable jurisdiction but were met with indifference.</p>
+                                    <p>Consequently, the Representatives of the united States of America declared that these united Colonies are, and of Right ought to be Free and Independent States. They are Absolved from all Allegiance to the British Crown, and all political connection between them and Great Britain is totally dissolved. As Free and Independent States, they have full Power to levy War, conclude Peace, contract Alliances, establish Commerce, and perform all other acts and things that independent States may rightfully do. For the support of this Declaration, they mutually pledged their Lives, Fortunes, and sacred Honor.</p>
+                                    <p>Among the signers of the Declaration of Independence was Thomas Jefferson from Virginia. While the source lists him as a signer, it does not explicitly state that he was the primary author, nor does it refer to him as the third US President.</p>
                                     <h3 class="mt-6">Audio Summary</h3>
                                     <audio controls class="w-full">
-                                        <source src="https://drive.google.com/uc?export=download&id=1coxySvms3OgB90zrEbQIH3mSr_kM8oL1" type="audio/mpeg">
+                                        <source src="https://docs.google.com/uc?id=1coxySvms3OgB90zrEbQIH3mSr_kM8oL1" type="audio/mpeg">
                                         Your browser does not support the audio element.
                                     </audio>
                                 </div>
@@ -188,37 +196,72 @@
                         'wwi': {
                             title: 'World War I (1914-1918)',
                             content: `
-                               <div class="prose prose-custom">
-                                    <h2>World War I (1914-1918)</h2>
-                                    <p>Known as the Great War, WWI was a global conflict that involved more than 30 nations and resulted in unprecedented casualties and destruction, reshaping the political map of the world.</p>
-
-                                    <h3>Causes of the War</h3>
-                                    <p>The war's immediate trigger was the assassination of <strong>Archduke Franz Ferdinand</strong> of Austria-Hungary by a Serbian nationalist on June 28, 1914. However, the underlying causes were a complex web of alliances, imperialism, militarism, and nationalism.</p>
+                               <div class="prose prose-custom" id="topic-text-wwi">
+                                    <h2>World War I</h2>
+                                    <p>World War I, initially known as the Great War and the War to End All Wars, lasted from 1914 to 1918. It was the largest war seen up to that time, with most battles occurring in Europe and the Middle East. The conflict resulted in over 8 million soldier and sailor deaths and more than 20 million injuries. Despite hopes that such a devastating war would prevent future conflicts, its outcomes contributed to the outbreak of World War II in 1939.</p>
+                                    <h3>Causes of the War:</h3>
+                                    <p>The war began with a murder in Sarajevo on June 28, 1914. Archduke Francis Ferdinand, nephew of the Austro-Hungarian emperor, was shot and killed by a Bosnian Serb. Austria-Hungary, whose region of Bosnia had long been unfriendly with neighboring Serbia due to Serbian desires for unification, accused Serbia of planning the crime. On July 28, Austria-Hungary declared war on Serbia. This declaration triggered a system of alliances, drawing more countries into the conflict.</p>
+                                    <h3>Combatants and Alliances:</h3>
+                                    <p>Initially, two major alliance systems formed:</p>
                                     <ul>
-                                        <li><strong>Central Powers:</strong> Primarily Germany, Austria-Hungary, the Ottoman Empire, and Bulgaria.</li>
-                                        <li><strong>Allied Powers:</strong> Primarily France, Great Britain, Russia, Italy (who switched sides in 1915), Japan, and the United States (who joined in 1917).</li>
+                                        <li><strong>Triple Alliance (Central Powers):</strong> Austria-Hungary, Germany, and later Bulgaria and the Ottoman Empire. Italy was initially part of the Triple Alliance but did not go to war at first and later joined the Allies in 1915.</li>
+                                        <li><strong>Triple Entente (Allies):</strong> Russia (who protected Serbia), France, and the United Kingdom (Great Britain). The United States also joined the Allies in 1917.</li>
                                     </ul>
-
-                                    <h3>The Nature of the War</h3>
+                                    <h3>Major Battlefronts and Warfare:</h3>
+                                    <p>Most of the war's battles took place in Europe and the Middle East.</p>
+                                    <p><strong>The Western Front:</strong> Battlefields west of Germany, stretching from the Belgian coast to the Swiss border, became synonymous with four years of trench warfare. Soldiers dug long trenches for protection, separated by a "no-man's land" covered with barbed wire. Rapid-firing machine guns were used against those attempting to cross this area.</p>
                                     <ul>
-                                        <li><strong>Western Front:</strong> Characterized by brutal <strong>trench warfare</strong>, a static and deadly form of combat where soldiers lived and fought in fortified ditches. "No-man's land" was the desolate space between opposing trenches.</li>
-                                        <li><strong>New Technologies of War:</strong> Machine guns, poison gas (first used by Germany at the Second Battle of Ypres), tanks (invented by the British), and airplanes made the war more lethal than any before it.</li>
-                                        <li><strong>War at Sea:</strong> The British used their powerful navy to blockade Germany. Germany retaliated with <strong>U-boats (submarines)</strong>, sinking Allied ships. The sinking of the passenger ship <em>Lusitania</em> in 1915 outraged the U.S.</li>
+                                        <li>Key battles included the First Battle of the Marne (September 6-12, 1914), where Allies pushed back the Germans.</li>
+                                        <li>In 1916, two of the war's worst battles occurred: the Battle of Verdun (February 21-July 1916) and the First Battle of the Somme (July 1-November 13, 1916). The First Battle of the Somme alone resulted in over 600,000 casualties on each side for only about 5 miles of gained ground.</li>
+                                        <li>New weapons were introduced to break trench defenses. At the Second Battle of Ypres (April 22-May 25, 1915), Germans used chlorine poison gas, leading both sides to employ chemical weapons and gas masks. The British invented tanks, armored vehicles with crawler tracks, first used in 1916 at the First Battle of the Somme, to navigate trenches and barbed wire.</li>
                                     </ul>
-
-                                    <h3>Turning Points and the End of the War</h3>
+                                    <p><strong>The Eastern Front:</strong> Battlefields east of Germany saw faster army movements.</p>
                                     <ul>
-                                        <li><strong>U.S. Entry (1917):</strong> Continued German unrestricted submarine warfare and the discovery of the Zimmermann Telegram (a German proposal for a military alliance with Mexico) brought the U.S. into the war.</li>
-                                        <li><strong>Russian Revolution (1917):</strong> Russia withdrew from the war after the Bolsheviks came to power, allowing Germany to focus on the Western Front.</li>
-                                        <li><strong>Armistice:</strong> Exhausted and facing collapse, Germany signed an armistice on <strong>November 11, 1918</strong>, ending the fighting.</li>
+                                        <li>In 1914, Russian armies advanced into Germany and Austria-Hungary, but the Germans responded with a crushing blow at the Battle of Tannenberg (August 26-30, 1914).</li>
+                                        <li>Bulgaria joined the Central Powers, and their combined forces took Serbia. Allied forces at Salonika in Greece made little progress until the war's end.</li>
                                     </ul>
-
-                                    <h3>Aftermath: The Treaty of Versailles</h3>
-                                    <p>The 1919 treaty officially ended the war. It imposed harsh terms on Germany, including massive financial reparations, loss of territory, and a "war guilt" clause, which bred resentment and is considered a major contributing factor to the rise of Adolf Hitler and World War II.</p>
-                               
+                                    <p><strong>The Middle East:</strong> The Ottoman Empire (present-day Turkey) joined the Central Powers at the end of 1914, attacking Russia.</p>
+                                    <ul>
+                                        <li>Allied troops, including those from Britain, Australia, and New Zealand, failed to stop the Ottomans on Turkey's Gallipoli Peninsula in the Dardanelles Campaign (February 1915-January 1916).</li>
+                                        <li>British-led troops eventually succeeded in taking Baghdad in March 1917, and later other Ottoman lands. A British officer, T.E. Lawrence (Lawrence of Arabia), led Arabs in battles against the Ottomans.</li>
+                                    </ul>
+                                    <h3>War at Sea:</h3>
+                                    <p>The British Navy, with more and better warships, implemented a naval blockade to stop ships from reaching German ports. However, German submarines (U-boats) posed a significant threat.</p>
+                                    <ul>
+                                        <li>In 1915, Germany announced it would sink enemy ships in British waters, notably sinking the British passenger ship Lusitania on May 7, 1915, killing nearly 1,200 people, including many U.S. citizens.</li>
+                                        <li>German submarines caused the loss of about 6,000 Allied ships, with the United Kingdom alone losing 13,000 lives. Allies defended supply ships by arming them and having them sail in convoys protected by warships.</li>
+                                    </ul>
+                                    <h3>War in the Air:</h3>
+                                    <p>Airplanes, invented only 11 years before the war, were utilized.</p>
+                                    <ul>
+                                        <li>Germany initially used zeppelins (floating aircraft) to bomb the United Kingdom, which then built antiaircraft guns.</li>
+                                        <li>Both sides developed warplanes, including fighters with machine guns. By 1917, Germans dropped bombs from large planes on London and other cities, causing civilian casualties.</li>
+                                    </ul>
+                                    <h3>Events of 1917 and Turning the Tide:</h3>
+                                    <ul>
+                                        <li>The Russian Revolution in 1917 significantly altered the Eastern Front. The Bolsheviks took over Russia in November and made peace with the Central Powers almost immediately, allowing Germany to move troops elsewhere.</li>
+                                        <li>The United States, initially neutral, declared war on Germany on April 6, 1917. This decision was prompted by Germany's continued attacks on U.S. supply ships and the discovery of Germany's promise to give Texas, New Mexico, and Arizona to Mexico in exchange for Mexico's help in the war.</li>
+                                        <li>The arrival of nearly 10,000 U.S. troops per day in France by 1918 shifted the balance on the Western Front, where Germans had initially outnumbered Allied soldiers. German attacks, such as the Second Battle of the Somme, achieved some success but ultimately exhausted their troops.</li>
+                                        <li>After the Second Battle of the Marne in July 1918, the Allies gained control of the war and by November, had driven the Germans back to the 1914 battle lines.</li>
+                                    </ul>
+                                    <h3>End of the War:</h3>
+                                    <p>The Central Powers began to surrender:</p>
+                                    <ul>
+                                        <li>Bulgaria surrendered on September 29, 1918.</li>
+                                        <li>Austria and the Ottomans requested a cease-fire on October 30, 1918.</li>
+                                        <li>Facing starvation due to the naval blockade, German government leaders signed an armistice (agreement to end fighting) on November 11, 1918.</li>
+                                    </ul>
+                                    <h3>The Peace and Its Aftermath:</h3>
+                                    <ul>
+                                        <li>In January 1919, Allied leaders met in Paris to create a peace treaty. The Treaty of Versailles was signed with Germany on June 28, 1919.</li>
+                                        <li>The treaty imposed harsh terms on Germany: it could only keep a small army and navy and was forced to pay a large amount of money to the Allies.</li>
+                                        <li>The treaty also established the League of Nations, an organization intended to prevent future wars.</li>
+                                        <li>However, the U.S. Senate refused to ratify the Treaty of Versailles, partly due to opposition to the League of Nations.</li>
+                                        <li>The peace did not last. The German people resented the harsh punishments, leading to the rise of Adolf Hitler in 1933. Hitler rebuilt the German military, and the League of Nations failed to stop him, ultimately contributing to World War II.</li>
+                                    </ul>
                                     <h3 class="mt-6">Audio Summary</h3>
                                     <audio controls class="w-full">
-                                        <source src="https://drive.google.com/uc?export=download&id=14T1grXIfhEwxNl99UMEio4IaP1NnKE_F" type="audio/mpeg">
+                                        <source src="https://docs.google.com/uc?id=14T1grXIfhEwxNl99UMEio4IaP1NnKE_F" type="audio/mpeg">
                                         Your browser does not support the audio element.
                                     </audio>
                                </div>
@@ -227,38 +270,86 @@
                          'wwii': {
                             title: 'World War II (1939-1945)',
                             content: `
-                               <div class="prose prose-custom">
-                                    <h2>World War II (1939-1945)</h2>
-                                    <p>World War II was the deadliest conflict in human history, involving more than 30 countries. This summary focuses on the European Theater.</p>
-
-                                    <h3>Buildup to War</h3>
+                               <div class="prose prose-custom" id="topic-text-wwii">
+                                    <h2>World War II: European Theater - Key Concepts and Facts</h2>
+                                    <h3>I. Introduction & Buildup to War</h3>
+                                    <p><strong>Global Conflict (1939-1945):</strong> Primarily between the Axis Powers (Germany, Italy, Japan) and the Allies (France, Great Britain, United States, Soviet Union, China).</p>
+                                    <p><strong>Enormous Human Cost:</strong> Estimates range from 35 million to 60 million deaths, with millions more wounded or left homeless. Civilian deaths alone were at least 20 million, from bombings, starvation, epidemics, and genocide.</p>
+                                    <h4>Causes - Axis Aggression (1931-1939):</h4>
                                     <ul>
-                                        <li><strong>Axis Aggression:</strong> Germany, under Adolf Hitler, Italy, under Benito Mussolini, and Japan engaged in aggressive expansionism.</li>
-                                        <li><strong>Appeasement:</strong> Britain and France initially adopted a policy of appeasement, allowing Hitler to annex territories (like parts of Czechoslovakia via the Munich Agreement) hoping to avoid another war.</li>
-                                        <li><strong>Nazi-Soviet Pact:</strong> In a shocking move, Germany and the Soviet Union signed a non-aggression pact in August 1939, secretly agreeing to divide Poland between them.</li>
+                                        <li>Germany, Italy, and Japan engaged in warlike acts and took territories.</li>
+                                        <li>The League of Nations proved ineffective in stopping Italian aggression (e.g., invasion of Ethiopia) and German expansion (e.g., takeover of Austria).</li>
+                                        <li><strong>Appeasement Policy:</strong> Britain and France initially allowed German dictator Adolf Hitler and Italian dictator Benito Mussolini to take desired territories, hoping to prevent war.</li>
+                                        <li><strong>Munich Agreement (September 1938):</strong> Britain and France agreed to let Germany have the Sudetenland (part of Czechoslovakia). Hitler broke this promise by taking the rest of Czechoslovakia in March 1939, effectively ending appeasement.</li>
                                     </ul>
-
-                                    <h3>The War Begins</h3>
+                                    <h4>Key Pacts before War:</h4>
                                     <ul>
-                                        <li><strong>Invasion of Poland:</strong> On <strong>September 1, 1939</strong>, Germany invaded Poland using "blitzkrieg" (lightning war) tactics. Britain and France declared war on Germany two days later.</li>
-                                        <li><strong>Fall of France:</strong> In 1940, Germany rapidly conquered Denmark, Norway, the Netherlands, Belgium, and France. Allied soldiers were evacuated from Dunkirk.</li>
-                                        <li><strong>Battle of Britain (1940):</strong> Germany's air campaign (the Blitz) to soften Britain for invasion was defeated by the Royal Air Force (RAF), a crucial turning point.</li>
+                                        <li><strong>German-Italian Pact (May 1939):</strong> Pledged mutual support in war.</li>
+                                        <li><strong>Nazi-Soviet Nonaggression Pact (August 1939):</strong> Signed by Hitler and Soviet dictator Joseph Stalin to prevent Germany from fighting on two fronts.</li>
                                     </ul>
-
-                                    <h3>Major Turning Points</h3>
+                                    <h3>II. The War Begins in Europe (1939-1941)</h3>
+                                    <p><strong>Invasion of Poland (September 1, 1939):</strong> Germany invaded Poland using "blitzkrieg" ("lightning war") tactics, destroying airfields, crippling communications, and encircling Polish armies with armored divisions. Britain and France declared war on Germany two days later.</p>
+                                    <p><strong>Soviet Actions in Eastern Europe:</strong> The Soviet Union invaded eastern Poland on September 17, and later fought Finland in the Soviet-Finnish War (November 1939- March 1940), gaining Finnish territory.</p>
+                                    <p><strong>"Phony War" (Sitzkrieg) on the Western Front:</strong> Little direct fighting on land as French forces (Maginot Line) and German forces (Siegfried Line) faced each other. However, the war at sea was active, with German U-boats sinking many Allied merchant and passenger ships.</p>
+                                    <h4>German Expansion (1940):</h4>
                                     <ul>
-                                        <li><strong>Invasion of the Soviet Union (June 1941):</strong> Hitler broke the pact and invaded the USSR, opening a massive and brutal Eastern Front.</li>
-                                        <li><strong>Battle of Stalingrad (1942-43):</strong> The Soviet Union defeated the German army in a devastating battle, marking the beginning of the end for Germany on the Eastern Front.</li>
-                                        <li><strong>D-Day (June 6, 1944):</strong> "Operation Overlord," the massive Allied invasion of Normandy, France. This opened the crucial Western Front, leading to the liberation of France.</li>
-                                        <li><strong>Battle of the Bulge (Winter 1944):</strong> Germany's last major offensive on the Western Front failed, depleting its remaining resources.</li>
+                                        <li>Germany conquered Denmark and Norway (April-June 1940).</li>
+                                        <li>Invaded Belgium, the Netherlands, and Luxembourg (May 1940).</li>
+                                        <li><strong>Dunkirk Evacuation (May 29 - June 4, 1940):</strong> 360,000 Allied soldiers were evacuated from Dunkirk, leaving their equipment behind.</li>
+                                        <li><strong>Fall of France (June 1940):</strong> German forces advanced rapidly, taking Paris. More than half of France was occupied, and a collaborationist Vichy government was established. Free French forces under Charles de Gaulle continued fighting from Britain.</li>
                                     </ul>
-                                    
-                                    <h3>End of the War in Europe</h3>
-                                    <p>Allied forces closed in on Germany from the west and east. The Soviet Red Army captured Berlin in April 1945. Adolf Hitler committed suicide on April 30. Germany officially surrendered on <strong>May 8, 1945 (V-E Day)</strong>.</p>
-
+                                    <p><strong>Battle of Britain (August-October 1940):</strong> Germany's air assault (the Blitz) on England aimed to soften it for invasion. The Royal Air Force (RAF), aided by radar, successfully defended against German bombers, preventing a German invasion of England. This was a crucial turning point, as Hitler never seriously considered invading Britain after October 1940.</p>
+                                    <p><strong>Axis Formalized:</strong> Japan signed the Tripartite (Axis) Pact with Germany and Italy in September 1940, formalizing the Rome-Berlin-Tokyo Axis.</p>
+                                    <h4>US Support for Allies (pre-entry):</h4>
+                                    <ul>
+                                        <li><strong>The Lend-Lease Act (early 1941)</strong> authorized lending or leasing war materials to Allied nations, making the US the "Arsenal of Democracy".</li>
+                                        <li><strong>Atlantic Charter (August 1941):</strong> US President Roosevelt and British Prime Minister Churchill met to outline Allied war aims, calling for the "final destruction of Nazi tyranny".</li>
+                                    </ul>
+                                    <p><strong>Germany Invades Soviet Union (June 22, 1941):</strong> Germany broke the nonaggression pact, opening a massive Eastern Front extending 2,000 miles. The Soviets employed a "scorched earth" policy and strong resistance, halting the German advance by late 1941.</p>
+                                    <h3>III. Turning Points and Allied Offensives in Europe (1942-1944)</h3>
+                                    <h4>North Africa:</h4>
+                                    <ul>
+                                        <li><strong>Battle of El Alamein (October 1942):</strong> British forces under General Montgomery drove Axis forces from Egypt, a turning point in North Africa.</li>
+                                        <li><strong>Operation Torch (November 1942):</strong> American and British forces under General Dwight D. Eisenhower landed in French North Africa, leading to the Axis surrender in Tunisia by May 1943.</li>
+                                    </ul>
+                                    <p><strong>Eastern Front - Battle of Stalingrad (August 1942 - February 1943):</strong> Fierce street-by-street resistance by the Red Army halted the German advance. The Soviets encircled and defeated the German 6th Army, marking a critical turning point in Europe.</p>
+                                    <p><strong>Invasion of Italy (July 1943):</strong> Allies invaded Sicily, leading to Benito Mussolini's removal, but German forces fought fiercely up the Italian mainland. Rome was captured by Allies in June 1944.</p>
+                                    <p><strong>Battle of the Atlantic (1943):</strong> Allies developed new defenses against German U-boats, including long-range bombers and advances in radar and sonar. British intelligence (Ultra) from the broken "Enigma" code was also crucial in defeating the U-boat menace.</p>
+                                    <p><strong>Strategic Bombing of Germany (1943-1944):</strong> American (daylight) and British (night) bombing raids intensified, targeting German industry and infrastructure, such as oil centers (e.g., Ploesti, Romania). The P-51 Mustang fighter provided crucial long-range escort.</p>
+                                    <h4>D-Day (Normandy) Invasion (June 6, 1944):</h4>
+                                    <ul>
+                                        <li>"Operation Overlord" saw a massive fleet land American, British, and Canadian divisions on Normandy beaches, opening the Western Front.</li>
+                                        <li>Allies broke out of beachheads by July 25.</li>
+                                        <li>Paris was liberated on August 25.</li>
+                                    </ul>
+                                    <p><strong>Battle of the Bulge (December 1944):</strong> A surprise German counteroffensive in the Ardennes forest. Despite initial German success, Allied resistance halted the advance, leading to a major German defeat and heavy losses.</p>
+                                    <h3>IV. The End of the War in Europe (1945)</h3>
+                                    <p><strong>Germany's Collapse:</strong> Allied armies advanced into Germany from both west and east.</p>
+                                    <p><strong>Fall of Berlin (April 1945):</strong> The Red Army attacked Berlin. Hitler committed suicide on April 30.</p>
+                                    <p><strong>German Surrender (May 7-8, 1945):</strong> Germany surrendered unconditionally to the Allies.</p>
+                                    <h3>V. Consequences and Post-War Europe</h3>
+                                    <p><strong>Shift in Global Power:</strong> Decisive shift of power away from Western Europe towards the United States and the Soviet Union.</p>
+                                    <p><strong>The Cold War:</strong> The tense rivalry between the US and Soviet Union emerged, influencing global events for the next 50 years.</p>
+                                    <h4>Division of Germany:</h4>
+                                    <ul>
+                                        <li>Germany was divided into American, British, French, and Soviet occupation zones, with Berlin also divided.</li>
+                                        <li>The Soviet blockade of Berlin (June 1948) attempted to force Western powers out.</li>
+                                        <li>The Berlin Airlift (1948-1949) successfully supplied West Berlin by air for 11 months, leading to the lifting of the blockade.</li>
+                                        <li>This led to the formation of West Germany (Federal Republic of Germany) and East Germany (German Democratic Republic).</li>
+                                    </ul>
+                                    <h4>New International Organizations:</h4>
+                                    <ul>
+                                        <li><strong>United Nations (UN):</strong> Established (October 24, 1945) to assure peace and avoid past mistakes.</li>
+                                        <li><strong>United Nations Relief and Rehabilitation Administration (UNRRA):</strong> Set up in 1943 for postwar relief and rehabilitation.</li>
+                                        <li><strong>Marshall Plan (1947):</strong> The US provided over $13 billion to rebuild Western Europe to create a strong economy and counter Communist aggression. The plan was a great success.</li>
+                                    </ul>
+                                    <p><strong>War Crimes Trials:</strong> Held at Nuremberg, Germany, for leading Nazis, with many executed or imprisoned.</p>
+                                    <p><strong>Peace Treaties (1947):</strong> Treaties were drafted with Italy, Hungary, Bulgaria, Romania, and Finland, addressing territorial changes, reparations, and disarmament. Guarantees were given against racial discrimination and the rebirth of fascist governments.</p>
+                                    <p><strong>Austria and Trieste:</strong> Austria was also divided into four occupation zones and later reunited in 1955. Trieste became a trouble spot, eventually divided between Italy and Yugoslavia.</p>
+                                    <p><strong>Decline of British Power:</strong> Britain began to give up its empire, granting independence to India (1947) and turning over the Palestine problem to the UN.</p>
                                     <h3 class="mt-6">Audio Summary</h3>
                                     <audio controls class="w-full">
-                                        <source src="https://drive.google.com/uc?export=download&id=11H_W9Pn6THl02gFC3D1Ciq7XPR7LsvDZ" type="audio/mpeg">
+                                        <source src="https://docs.google.com/uc?id=11H_W9Pn6THl02gFC3D1Ciq7XPR7LsvDZ" type="audio/mpeg">
                                         Your browser does not support the audio element.
                                     </audio>
                                </div>
@@ -267,34 +358,28 @@
                         'holocaust': {
                             title: 'The Holocaust',
                             content: `
-                                <div class="prose prose-custom">
+                                <div class="prose prose-custom" id="topic-text-holocaust">
                                     <h2>The Holocaust</h2>
-                                    <p>The Holocaust was the systematic, state-sponsored persecution and murder of six million Jews by the Nazi regime and its collaborators. The Nazis, who came to power in Germany in January 1933, believed that Germans were "racially superior" and that Jews, deemed "inferior," were an alien threat to the so-called German racial community.</p>
-
-                                    <h3>Escalation of Persecution</h3>
-                                    <p>The persecution of Jews escalated over time:</p>
+                                    <p>Here is a brief and informative summary, focusing on key events and information from the provided sources, relevant for a quiz:</p>
+                                    <p>The Holocaust Explained is a website designed for schools to help learners understand the essential facts of the Holocaust, its causes, and consequences.</p>
                                     <ul>
-                                        <li><strong>1933-1938:</strong> Upon taking power, the Nazis quickly began to disenfranchise Jews, excluding them from public life, professions, and schools. The <strong>Nuremberg Laws of 1935</strong> institutionalized this discrimination, stripping Jews of their citizenship.</li>
-                                        <li><strong>Kristallnacht (Night of Broken Glass), 1938:</strong> A violent pogrom against Jews throughout Nazi Germany. Jewish homes, businesses, and synagogues were destroyed, and thousands of Jewish men were arrested and sent to concentration camps.</li>
+                                        <li>It is managed by The Wiener Holocaust Library, which is Britain's national Holocaust archive and the oldest archive of material on the Nazi era and the Holocaust in the world.</li>
+                                        <li>The website's main learning materials are accessible to learners aged thirteen to eighteen, with advanced content available for deeper exploration. This advanced content can be activated by clicking a red button on the left side of each page or tapping the topic menu on mobile.</li>
+                                        <li>The site includes a timeline of important events in Holocaust history to aid understanding and navigation through the sequence of events.</li>
                                     </ul>
-
-                                    <h3>The "Final Solution"</h3>
-                                    <p>During World War II, Nazi policy shifted from persecution and forced emigration to systematic mass murder. This genocide is known as the "Final Solution to the Jewish Question."</p>
+                                    <h3>Key events mentioned in the timeline include:</h3>
                                     <ul>
-                                        <li><strong>Ghettos:</strong> Jews were forced into overcrowded, sealed-off ghettos, where they died from starvation and disease.</li>
-                                        <li><strong>Einsatzgruppen (Mobile Killing Units):</strong> Following the invasion of the Soviet Union in 1941, these special SS units carried out mass shootings of Jews in Eastern Europe.</li>
-                                        <li><strong>Extermination Camps:</strong> The Nazis established killing centers, or extermination camps, primarily in occupied Poland. The largest was <strong>Auschwitz-Birkenau</strong>. Victims were murdered in gas chambers.</li>
+                                        <li><strong>June 22, 1933:</strong> The Nazis banned the Social Democratic Party of Germany.</li>
+                                        <li><strong>June 30, 1934:</strong> The Night of Long Knives, a purge of the Nazi leadership by Hitler, occurred.</li>
+                                        <li><strong>June 28, 1935:</strong> Paragraph 175 of the German Criminal Code was revised, intensifying the persecution of gay men.</li>
+                                        <li><strong>June 22, 1941:</strong> The Nazis invaded the Soviet Union.</li>
+                                        <li><strong>June 9, 1942:</strong> The Nazis liquidated the Czech village of Lidice in response to the assassination of Reinhard Heydrich.</li>
+                                        <li><strong>June 6, 1944:</strong> D-Day took place, with British, Canadian, French, and US troops landing on the beaches of German-occupied France.</li>
                                     </ul>
-
-                                    <h3>Other Victims of Persecution</h3>
-                                    <p>While Jews were the primary targets, the Nazi regime also persecuted other groups based on their perceived racial or ideological inferiority. These included Roma (Gypsies), people with disabilities, some Slavic peoples (Poles, Russians), and political opponents, communists, socialists, Jehovah's Witnesses, and homosexuals.</p>
-
-                                    <h3>Liberation and Aftermath</h3>
-                                    <p>As Allied forces moved across Europe in 1944 and 1945, they liberated the concentration camps, exposing the full horror of the Holocaust to the world. The post-war Nuremberg Trials prosecuted leading Nazi officials for war crimes and crimes against humanity.</p>
-                                    
+                                    <p>The website also features survivor testimonies, with several individuals like Alice Redlich, Peter Briess, Freddie Knoller, Eva Clarke, and Simon Winston highlighted as examples.</p>
                                     <h3 class="mt-6">Audio Summary</h3>
                                     <audio controls class="w-full">
-                                        <source src="https://drive.google.com/uc?export=download&id=1Hw8DuAWLuzTLAxjz8OOIhc8O1muLVKsR" type="audio/mpeg">
+                                        <source src="https://docs.google.com/uc?id=1Hw8DuAWLuzTLAxjz8OOIhc8O1muLVKsR" type="audio/mpeg">
                                         Your browser does not support the audio element.
                                     </audio>
                                 </div>
@@ -378,6 +463,162 @@
                 };
             },
             methods: {
+                // ... (existing methods: navigate, startQuiz, submitAnswer, getResultsFeedback, shuffleArray, etc.)
+
+                 // --- New methods for Gemini API ---
+                async simplifyText() {
+                    if (this.isLoading) return;
+                    this.isLoading = true;
+                    this.showModal = true;
+                    this.modalContent = '✨ Our AI is simplifying the text for you...';
+                    this.renderPage();
+
+                    try {
+                        const topicText = document.getElementById(`topic-text-${this.currentTopic}`).innerText;
+                        const prompt = `Please explain the following historical text in simple, easy-to-understand terms, as if you were explaining it to a 15-year-old. Keep it concise but cover the main points:\n\n---\n${topicText}`;
+                        
+                        const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                        const payload = { contents: chatHistory };
+                        const apiKey = ""; // API key will be automatically provided
+                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const result = await response.json();
+
+                        if (result.candidates && result.candidates[0].content.parts[0].text) {
+                            this.modalContent = result.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+                        } else {
+                            this.modalContent = 'Sorry, we couldn\'t simplify the text at this time. Please try again.';
+                        }
+                    } catch (error) {
+                        console.error("Error simplifying text:", error);
+                        this.modalContent = 'An error occurred. Please check the console for details.';
+                    } finally {
+                        this.isLoading = false;
+                        this.renderPage();
+                    }
+                },
+
+                async generateNewQuestions() {
+                    if (this.isLoading) return;
+                    this.isLoading = true;
+                    this.renderPage(); // To show loading state on the button
+
+                    try {
+                        const topicText = document.getElementById(`topic-text-${this.quizType}`).innerText;
+                        const prompt = `Based on the following text about ${this.topics[this.quizType].title}, generate 5 new and unique multiple-choice quiz questions that are different from the existing ones. Ensure the response is only a valid JSON array of objects, where each object has keys 'q' (string), 'a' (array of 4 strings), and 'c' (integer index of the correct answer).`;
+
+                        const payload = {
+                            contents: [{ role: "user", parts: [{ text: prompt }] }],
+                            generationConfig: {
+                                responseMimeType: "application/json",
+                                responseSchema: {
+                                    type: "ARRAY",
+                                    items: {
+                                        type: "OBJECT",
+                                        properties: {
+                                            "q": { "type": "STRING" },
+                                            "a": { "type": "ARRAY", "items": { "type": "STRING" } },
+                                            "c": { "type": "INTEGER" }
+                                        },
+                                        required: ["q", "a", "c"]
+                                    }
+                                }
+                            }
+                        };
+                        const apiKey = "";
+                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+                        
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const result = await response.json();
+                        
+                        if (result.candidates && result.candidates[0].content.parts[0].text) {
+                            const newQuestions = JSON.parse(result.candidates[0].content.parts[0].text);
+                            this.questions = newQuestions.map(q => ({...q, topic: this.quizType}));
+                            this.currentQuestionIndex = 0;
+                            this.score = 0;
+                            this.userAnswers = [];
+                            this.currentPage = 'quiz-active';
+                        } else {
+                           throw new Error("Could not generate new questions.");
+                        }
+
+                    } catch (error) {
+                        console.error("Error generating new questions:", error);
+                        alert("Sorry, we couldn't generate new questions at this time. Please try again.");
+                    } finally {
+                         this.isLoading = false;
+                         this.renderPage();
+                    }
+                },
+                
+                async connectTopics() {
+                    if (this.isLoading) return;
+                    this.isLoading = true;
+                    this.connectionContent = '✨ Our AI is analyzing the connection...';
+                    this.renderPage();
+
+                    try {
+                        const topic1Text = document.getElementById(`topic-text-${this.connectTopic1}`).innerText;
+                        const topic2Text = document.getElementById(`topic-text-${this.connectTopic2}`).innerText;
+                        
+                        const prompt = `Based on the following two historical texts, please explain the historical connection, influence, or contrast between "${this.topics[this.connectTopic1].title}" and "${this.topics[this.connectTopic2].title}".
+
+                        Text 1: ${this.topics[this.connectTopic1].title}
+                        ---
+                        ${topic1Text}
+                        ---
+
+                        Text 2: ${this.topics[this.connectTopic2].title}
+                        ---
+                        ${topic2Text}
+                        ---
+                        `;
+                        
+                        const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
+                        const payload = { contents: chatHistory };
+                        const apiKey = ""; 
+                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        const result = await response.json();
+
+                        if (result.candidates && result.candidates[0].content.parts[0].text) {
+                            this.connectionContent = result.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
+                        } else {
+                            this.connectionContent = 'Sorry, we couldn\'t find a connection at this time. Please try again.';
+                        }
+                    } catch (error) {
+                        console.error("Error connecting topics:", error);
+                        this.connectionContent = 'An error occurred. Please check the console for details.';
+                    } finally {
+                        this.isLoading = false;
+                        this.renderPage();
+                    }
+                },
+                
+                closeModal() {
+                    this.showModal = false;
+                    this.modalContent = '';
+                    this.renderPage();
+                },
+
+                // --- Page Rendering ---
                 navigate(page, topic = null) {
                     this.currentPage = page;
                     this.currentTopic = topic;
@@ -463,12 +704,14 @@
                 },
                 renderPage() {
                     const appEl = document.getElementById('app');
+                    let modalHtml = this.showModal ? this.ModalComponent() : '';
+
                     switch (this.currentPage) {
                         case 'home':
                             appEl.innerHTML = this.HomePage();
                             break;
                         case 'topic':
-                            appEl.innerHTML = this.TopicPage();
+                            appEl.innerHTML = this.TopicPage() + modalHtml;
                             break;
                         case 'quiz':
                             appEl.innerHTML = this.QuizPage();
@@ -479,12 +722,16 @@
                         case 'quiz-results':
                              appEl.innerHTML = this.QuizResultsPage();
                              break;
+                        case 'connect':
+                            appEl.innerHTML = this.ConnectPage();
+                            break;
                         default:
                             appEl.innerHTML = this.HomePage();
                     }
                      this.addEventListeners();
                 },
                 addEventListeners() {
+                    // Standard navigation
                     document.querySelectorAll('[data-navigate]').forEach(el => {
                         el.addEventListener('click', (e) => {
                             const page = e.currentTarget.getAttribute('data-navigate');
@@ -493,6 +740,7 @@
                             this.renderPage();
                         });
                     });
+                    // Quiz start
                      document.querySelectorAll('[data-quiz-start]').forEach(el => {
                         el.addEventListener('click', (e) => {
                             const type = e.currentTarget.getAttribute('data-quiz-start');
@@ -500,6 +748,7 @@
                              this.renderPage();
                         });
                     });
+                    // Quiz answer
                     document.querySelectorAll('[data-answer]').forEach(el => {
                         el.addEventListener('click', (e) => {
                             const choiceIndex = parseInt(e.currentTarget.getAttribute('data-answer'));
@@ -507,6 +756,24 @@
                              this.renderPage();
                         });
                     });
+                    // Gemini features
+                    const simplifyBtn = document.getElementById('simplify-btn');
+                    if(simplifyBtn) simplifyBtn.addEventListener('click', () => this.simplifyText());
+
+                    const newQuestionsBtn = document.getElementById('new-questions-btn');
+                    if(newQuestionsBtn) newQuestionsBtn.addEventListener('click', () => this.generateNewQuestions());
+                    
+                    const connectBtn = document.getElementById('connect-btn');
+                    if(connectBtn) connectBtn.addEventListener('click', () => this.connectTopics());
+
+                    const closeModalBtn = document.getElementById('close-modal-btn');
+                    if(closeModalBtn) closeModalBtn.addEventListener('click', () => this.closeModal());
+                    
+                    const connectTopic1Select = document.getElementById('connect-topic-1');
+                    if(connectTopic1Select) connectTopic1Select.addEventListener('change', (e) => this.connectTopic1 = e.target.value);
+
+                    const connectTopic2Select = document.getElementById('connect-topic-2');
+                    if(connectTopic2Select) connectTopic2Select.addEventListener('change', (e) => this.connectTopic2 = e.target.value);
                 },
                 HomePage() {
                     let topicCards = '';
@@ -533,6 +800,10 @@
                                         <h3 class="text-2xl font-bold">Quiz Zone</h3>
                                         <p>Test Your Knowledge!</p>
                                     </div>
+                                     <div class="bg-teal-600 text-white rounded-lg shadow-lg p-6 topic-card cursor-pointer flex flex-col justify-center items-center" data-navigate="connect">
+                                        <h3 class="text-2xl font-bold">✨ Connect the Dots</h3>
+                                        <p>Find historical links!</p>
+                                    </div>
                                 </div>
                             </main>
                         </div>
@@ -543,11 +814,16 @@
                     return `
                         <div class="min-h-screen bg-white">
                             <header class="bg-gray-800 text-white shadow-md">
-                                <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-                                    <h1 class="text-3xl font-bold">${topic.title}</h1>
-                                    <button class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded" data-navigate="home">
-                                        &larr; Back to Menu
-                                    </button>
+                                <div class="container mx-auto px-6 py-4 flex justify-between items-center flex-wrap gap-4">
+                                    <h1 class="text-2xl sm:text-3xl font-bold">${topic.title}</h1>
+                                    <div>
+                                        <button id="simplify-btn" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded mr-2">
+                                            ✨ Simplify with AI
+                                        </button>
+                                        <button class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded" data-navigate="home">
+                                            &larr; Back to Menu
+                                        </button>
+                                    </div>
                                 </div>
                             </header>
                              <main class="container mx-auto px-6 py-12">
@@ -612,7 +888,7 @@
                         </div>
                     `;
                 },
-                 QuizResultsPage() {
+                QuizResultsPage() {
                     let resultsHtml = '';
                     this.userAnswers.forEach(answer => {
                         resultsHtml += `
@@ -625,6 +901,10 @@
                     });
 
                      const feedbackHtml = this.getResultsFeedback();
+                     const newQuestionsButtonHtml = this.quizType !== 'all' ? `
+                        <button id="new-questions-btn" class="bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg quiz-option-btn w-full sm:w-auto" ${this.isLoading ? 'disabled' : ''}>
+                           ${this.isLoading ? 'Generating...' : '✨ Generate New Questions with AI'}
+                        </button>` : '';
 
                     return `
                         <div class="min-h-screen bg-gray-100 p-4 sm:p-6 md:p-8">
@@ -641,46 +921,94 @@
                                 <div class="space-y-4">
                                     ${resultsHtml}
                                 </div>
-                                <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
-                                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg quiz-option-btn" data-quiz-start="${this.quizType}">
+                                <div class="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4 flex-wrap">
+                                    <button class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg quiz-option-btn w-full sm:w-auto" data-quiz-start="${this.quizType}">
                                         Try Again
                                     </button>
-                                     <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg quiz-option-btn" data-navigate="quiz">
+                                     <button class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 px-6 rounded-lg quiz-option-btn w-full sm:w-auto" data-navigate="quiz">
                                         Choose Another Quiz
                                     </button>
+                                    ${newQuestionsButtonHtml}
                                 </div>
                             </div>
                         </div>
                     `;
                 },
+                 ConnectPage() {
+                    let optionsHtml = '';
+                    for (const key in this.topics) {
+                        optionsHtml += `<option value="${key}">${this.topics[key].title}</option>`;
+                    }
+                    
+                    return `
+                        <div class="min-h-screen bg-gray-100">
+                             <header class="bg-white shadow-md">
+                                <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+                                    <h1 class="text-3xl font-bold text-gray-800">✨ Connect the Dots</h1>
+                                     <button class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded" data-navigate="home">
+                                        &larr; Back to Menu
+                                    </button>
+                                </div>
+                            </header>
+                            <main class="container mx-auto px-6 py-12">
+                                <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                                    <p class="text-gray-600 mb-6">Select two historical topics to see how they connect, influence, or contrast with each other.</p>
+                                    <div class="flex flex-col sm:flex-row items-center gap-4 mb-6">
+                                        <select id="connect-topic-1" class="w-full p-2 border border-gray-300 rounded-md">
+                                            ${optionsHtml}
+                                        </select>
+                                        <span class="font-bold text-gray-600">and</span>
+                                        <select id="connect-topic-2" class="w-full p-2 border border-gray-300 rounded-md">
+                                             ${optionsHtml}
+                                        </select>
+                                    </div>
+                                    <button id="connect-btn" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg" ${this.isLoading ? 'disabled' : ''}>
+                                        ${this.isLoading ? 'Analyzing...' : 'Find Connection'}
+                                    </button>
+                                    
+                                    <div id="connection-result" class="mt-8 prose prose-custom max-w-none">
+                                        ${this.connectionContent ? `<h3>Connection Analysis</h3><p>${this.connectionContent}</p>` : ''}
+                                    </div>
+                                </div>
+                            </main>
+                        </div>
+                    `;
+                },
+                ModalComponent() {
+                    return `
+                        <div id="modal-backdrop" class="fixed inset-0 bg-black bg-opacity-50 z-40 modal items-center justify-center">
+                            <div class="bg-white rounded-lg shadow-2xl w-11/12 max-w-2xl max-h-[80vh] overflow-y-auto p-6 z-50">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h3 class="text-2xl font-bold text-gray-800">✨ AI Explanation</h3>
+                                    <button id="close-modal-btn" class="text-gray-500 hover:text-gray-800">&times;</button>
+                                </div>
+                                <div class="prose max-w-none">
+                                    <p>${this.modalContent}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
             },
-            // The mounted hook is a lifecycle method that runs once the app is ready.
             mounted() {
                 this.renderPage();
+                // Set default different values for connect page dropdowns
+                const topicKeys = Object.keys(this.topics);
+                if (topicKeys.length > 1) {
+                    this.connectTopic1 = topicKeys[0];
+                    this.connectTopic2 = topicKeys[1];
+                }
             }
         };
 
-        // Create and initialize the app instance using an IIFE (Immediately Invoked Function Expression).
-        // This pattern helps create a self-contained module and correctly sets the scope.
         (function(config) {
-            // The main app object will hold both the state (data) and the methods.
             const app = {};
-
-            // Assign data properties from the data() function to the app object.
             Object.assign(app, config.data());
-
-            // Assign methods to the app object. Crucially, we use .bind(app) to ensure that
-            // whenever a method is called, the 'this' keyword inside that method refers to the 'app'
-            // object itself. This fixes the error where 'this' was not correctly pointing to the
-            // object containing the state and other methods.
             for (const methodName in config.methods) {
                 app[methodName] = config.methods[methodName].bind(app);
             }
-
-            // Now that the 'app' object is fully constructed with its data and correctly-bound methods,
-            // we call the 'mounted' hook with the 'app' object as its context.
             config.mounted.call(app);
-            
         })(appConfig);
     </script>
 </body>
