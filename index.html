@@ -76,9 +76,6 @@
                     score: 0,
                     userAnswers: [],
                     isLoading: false,
-                    connectTopic1: 'magna-carta',
-                    connectTopic2: 'french-revolution',
-                    connectionContent: '',
                     isReading: false, // For TTS feature
                     topics: {
                         'magna-carta': {
@@ -563,56 +560,6 @@
                     }
                 },
                 
-                async connectTopics() {
-                    if (this.isLoading) return;
-                    this.isLoading = true;
-                    this.connectionContent = '✨ Our AI is analyzing the connection...';
-                    this.renderPage();
-
-                    try {
-                        const topic1Text = this.topics[this.connectTopic1].content;
-                        const topic2Text = this.topics[this.connectTopic2].content;
-                        
-                        const prompt = `Based on the following two historical texts, please explain the historical connection, influence, or contrast between "${this.topics[this.connectTopic1].title}" and "${this.topics[this.connectTopic2].title}".
-
-                        Text 1: ${this.topics[this.connectTopic1].title}
-                        ---
-                        ${topic1Text}
-                        ---
-
-                        Text 2: ${this.topics[this.connectTopic2].title}
-                        ---
-                        ${topic2Text}
-                        ---
-                        `;
-                        
-                        const chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-                        const payload = { contents: chatHistory };
-                        const apiKey = ""; 
-                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-                        const response = await fetch(apiUrl, {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify(payload)
-                        });
-
-                        const result = await response.json();
-
-                        if (result.candidates && result.candidates[0].content.parts[0].text) {
-                            this.connectionContent = result.candidates[0].content.parts[0].text.replace(/\n/g, '<br>');
-                        } else {
-                            this.connectionContent = 'Sorry, we couldn\'t find a connection at this time. Please try again.';
-                        }
-                    } catch (error) {
-                        console.error("Error connecting topics:", error);
-                        this.connectionContent = 'An error occurred. Please check the console for details.';
-                    } finally {
-                        this.isLoading = false;
-                        this.renderPage();
-                    }
-                },
-                
                 toggleReading() {
                     if (!('speechSynthesis' in window)) {
                         alert('Sorry, your browser does not support text-to-speech.');
@@ -765,9 +712,6 @@
                         case 'quiz-results':
                              appEl.innerHTML = this.QuizResultsPage();
                              break;
-                        case 'connect':
-                            appEl.innerHTML = this.ConnectPage();
-                            break;
                         default:
                             appEl.innerHTML = this.HomePage();
                     }
@@ -803,15 +747,6 @@
                     const newQuestionsBtn = document.getElementById('new-questions-btn');
                     if(newQuestionsBtn) newQuestionsBtn.addEventListener('click', () => this.generateNewQuestions());
                     
-                    const connectBtn = document.getElementById('connect-btn');
-                    if(connectBtn) connectBtn.addEventListener('click', () => this.connectTopics());
-
-                    const connectTopic1Select = document.getElementById('connect-topic-1');
-                    if(connectTopic1Select) connectTopic1Select.addEventListener('change', (e) => this.connectTopic1 = e.target.value);
-
-                    const connectTopic2Select = document.getElementById('connect-topic-2');
-                    if(connectTopic2Select) connectTopic2Select.addEventListener('change', (e) => this.connectTopic2 = e.target.value);
-                    
                     const ttsBtn = document.getElementById('tts-btn');
                     if (ttsBtn) ttsBtn.addEventListener('click', () => this.toggleReading());
                 },
@@ -839,10 +774,6 @@
                                     <div class="bg-indigo-600 text-white rounded-lg shadow-lg p-6 topic-card cursor-pointer flex flex-col justify-center items-center" data-navigate="quiz">
                                         <h3 class="text-2xl font-bold">Quiz Zone</h3>
                                         <p>Test Your Knowledge!</p>
-                                    </div>
-                                     <div class="bg-teal-600 text-white rounded-lg shadow-lg p-6 topic-card cursor-pointer flex flex-col justify-center items-center" data-navigate="connect">
-                                        <h3 class="text-2xl font-bold">✨ Connect the Dots</h3>
-                                        <p>Find historical links!</p>
                                     </div>
                                 </div>
                             </main>
@@ -980,56 +911,10 @@
                             </div>
                         </div>
                     `;
-                },
-                 ConnectPage() {
-                    let optionsHtml = '';
-                    for (const key in this.topics) {
-                        optionsHtml += `<option value="${key}">${this.topics[key].title}</option>`;
-                    }
-                    
-                    return `
-                        <div class="min-h-screen bg-gray-100">
-                             <header class="bg-white shadow-md">
-                                <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-                                    <h1 class="text-3xl font-bold text-gray-800">✨ Connect the Dots</h1>
-                                     <button class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded" data-navigate="home">
-                                        &larr; Back to Menu
-                                    </button>
-                                </div>
-                            </header>
-                            <main class="container mx-auto px-6 py-12">
-                                <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-lg">
-                                    <p class="text-gray-600 mb-6">Select two historical topics to see how they connect, influence, or contrast with each other.</p>
-                                    <div class="flex flex-col sm:flex-row items-center gap-4 mb-6">
-                                        <select id="connect-topic-1" class="w-full p-2 border border-gray-300 rounded-md">
-                                            ${optionsHtml}
-                                        </select>
-                                        <span class="font-bold text-gray-600">and</span>
-                                        <select id="connect-topic-2" class="w-full p-2 border border-gray-300 rounded-md">
-                                             ${optionsHtml}
-                                        </select>
-                                    </div>
-                                    <button id="connect-btn" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-6 rounded-lg" ${this.isLoading ? 'disabled' : ''}>
-                                        ${this.isLoading ? 'Analyzing...' : 'Find Connection'}
-                                    </button>
-                                    
-                                    <div id="connection-result" class="mt-8 prose prose-custom max-w-none">
-                                        ${this.connectionContent ? `<h3>Connection Analysis</h3><p>${this.connectionContent}</p>` : ''}
-                                    </div>
-                                </div>
-                            </main>
-                        </div>
-                    `;
                 }
             },
             mounted() {
                 this.renderPage();
-                // Set default different values for connect page dropdowns
-                const topicKeys = Object.keys(this.topics);
-                if (topicKeys.length > 1) {
-                    this.connectTopic1 = topicKeys[0];
-                    this.connectTopic2 = topicKeys[1];
-                }
             }
         };
 
